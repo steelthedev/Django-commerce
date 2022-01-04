@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.http import HttpResponse, response
 from .serializers import *
+from django.db.models import Q
 # Create your views here.
 
 
@@ -40,6 +41,21 @@ def ViewCart(request):
     if request.method == "GET":
         serializer = OrderSerializer(order)
         return Response(serializer.data)
+
+@api_view(['POST'])
+def Search(request):
+    if request.method == "POST":
+        q = request.data.get('query', '')
+        if q:
+            try:
+                products = Product.objects.filter(Q(name__icontains=q) | Q(description__icontains = q))
+            except products.DoesNotExist:
+                return HttpResponse(status=404)
+            serializer = ProductSerializer(products, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({"products":[]})
+
 
 
         

@@ -67,6 +67,8 @@ class Product(models.Model):
       return 'http://127.0.0.1:8000' + self.thumb.url
     return ''
     
+  def get_category(self):
+    return self.category.category
 
 
 
